@@ -11,14 +11,14 @@ namespace DataLayer
     public class Data
     {
         //Save an Admin object to File in Json format
-        public void SaveToFile(Admin admin)
+        public void AddToFile(Admin admin)
         {
             string jsonOutput = JsonSerializer.Serialize(admin);
             File.AppendAllText("admins.txt", jsonOutput + Environment.NewLine);
         }
 
         // Save a Customer object to file in Json format
-        public void SaveToFile(Customer customer)
+        public void AddToFile(Customer customer)
         {
             string jsonOutput = JsonSerializer.Serialize(customer);
             File.AppendAllText("customers.txt", jsonOutput + Environment.NewLine);
@@ -42,7 +42,7 @@ namespace DataLayer
         }
 
         // Checks if an Admin object in File
-        public Boolean isInFile(Admin user)
+        public bool isInFile(Admin user)
         {
             List<Admin> list = ReadFile<Admin>("admins.txt");
             foreach (Admin admin in list)
@@ -56,7 +56,7 @@ namespace DataLayer
         }
 
         // Checks if an Customer object in File
-        public Boolean isInFile(Customer user)
+        public bool isInFile(Customer user)
         {
             List<Customer> list = ReadFile<Customer>("customers.txt");
             foreach (Customer customer in list)
@@ -67,6 +67,18 @@ namespace DataLayer
                 }
             }
             return false;
+        }
+
+        // Method to get the last account number
+        public int getLastAccountNumber()
+        {
+            List<Customer> list = ReadFile<Customer>("customers.txt");
+            if(list.Count > 0)
+            {
+                Customer customer = list[list.Count - 1];
+                return customer.AccountNo;
+            }
+            return 0;
         }
     }
 }

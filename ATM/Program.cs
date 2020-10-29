@@ -15,9 +15,9 @@ namespace ATM
             Admin admin2 = new Admin { Username = "admin2", Pin = "12345" };
             Admin admin3 = new Admin { Username = "admin3", Pin = "12345" };
             Data obj = new Data();
-            obj.SaveToFile(admin1);
-            obj.SaveToFile(admin2);
-            obj.SaveToFile(admin3);
+            obj.AddToFile(admin1);
+            obj.AddToFile(admin2);
+            obj.AddToFile(admin3);
             */
 
             View view = new View();
