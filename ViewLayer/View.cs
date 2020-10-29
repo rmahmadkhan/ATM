@@ -136,7 +136,10 @@ namespace ViewLayer
                     }
                     switch (option)
                     {
-
+                        case 1:
+                            Logic logic = new Logic();
+                            
+                            break;
                     }
                 }
                 catch(Exception e)
