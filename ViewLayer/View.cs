@@ -111,60 +111,74 @@ namespace ViewLayer
         // Admin Screen and option
         public void AdminScreen()
         {
-            Console.WriteLine("1----Create New Account\n" +
-                "2----Delete Existing Account\n" +
-                "3----Update Account Information\n" +
-                "4----Search for Account\n" +
-                "5----View Reports\n" +
-                "6----Exit");
-
-            try
+        adminScreen:
             {
-            getAdminOption:
-                {
-                    string option = Console.ReadLine();
-                    // Checking if input is correct
-                    if (option == "1" || option == "2" || option == "3" || option == "4" || option == "5" || option == "6")
-                    {
-                        Logic logic = new Logic();
-                        switch (option)
-                        {
+                Console.Clear();
+                Console.WriteLine("-----Admin Menu-----\n");
+                Console.WriteLine("1----Create New Account\n" +
+                    "2----Delete Existing Account\n" +
+                    "3----Update Account Information\n" +
+                    "4----Search for Account\n" +
+                    "5----View Reports\n" +
+                    "6----Exit");
 
-                            case "1":
-                                logic.CreateAccount();
-                                break;
-                            //    case 2:
-                            //        logic.DeleteAccount();
-                            //        break;
-                            //    case 3:
-                            //        logic.UpdateAccount();
-                            //        break;
-                            //    case 4:
-                            //        logic.SearchAccount();
-                            //        break;
-                            //    case 5:
-                            //        logic.ViewReports();
-                            //        break;
-                            //    // Exits the applicaion
-                            case "6":
-                                System.Environment.Exit(0);
-                                break;
+                try
+                {
+                getAdminOption:
+                    {
+                        string option = Console.ReadLine();
+                        // Checking if input is correct
+                        if (option == "1" || option == "2" || option == "3" || option == "4" || option == "5" || option == "6")
+                        {
+                            Logic logic = new Logic();
+                            switch (option)
+                            {
+                                // To create a new account
+                                case "1":
+                                    logic.CreateAccount();
+                                    break;
+                                case "2":
+                                    logic.DeleteAccount();
+                                    break;
+                                //case 3:
+                                //    logic.UpdateAccount();
+                                //    break;
+                                //    case 4:
+                                //        logic.SearchAccount();
+                                //        break;
+                                //    case 5:
+                                //        logic.ViewReports();
+                                //        break;
+                                // Exits the applicaion
+                                case "6":
+                                    System.Environment.Exit(0);
+                                    break;
+                            }
                         }
+                        else
+                        {
+                            Console.WriteLine("Wrong Input. Please try again");
+                            goto getAdminOption;
+                        }
+                    }
+                    // Asks user if to continue or not
+                    Console.Write("\nDo you wish to continue(y/n): ");
+                    string wish = Console.ReadLine();
+                    if (wish == "y" || wish == "Y")
+                    {
+                        goto adminScreen;
                     }
                     else
                     {
-                        Console.WriteLine("Wrong Input. Please try again");
-                        goto getAdminOption;
+                        System.Environment.Exit(0);
                     }
+
                 }
-
-
+                catch (Exception)
+                {
+                    Console.WriteLine("Please try again");
+                }
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Please try again");
-            }
-
         }
     }
 }

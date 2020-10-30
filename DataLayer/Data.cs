@@ -62,6 +62,23 @@ namespace DataLayer
             return list;
         }
 
+        // Deletes a customer object from file
+        public void DeleteFromFile(Customer customer)
+        {
+            List<Customer> list = ReadFile<Customer>("customers.txt");
+            // Checking and remove the required object from the list
+            foreach(Customer item in list)
+            {
+                if(item.AccountNo == customer.AccountNo)
+                {
+                    list.Remove(item);
+                    break;
+                }
+            }
+            // Overwriting the list to file
+            SaveToFile<Customer>(list);
+        }
+
         // Checks if an Admin object in File
         public bool isInFile(Admin user)
         {
@@ -90,6 +107,22 @@ namespace DataLayer
             return false;
         }
 
+        // Checks if an account number is in File
+        public bool isInFile(int accNo, out Customer outCustomer)
+        {
+            List<Customer> list = ReadFile<Customer>("customers.txt");
+            foreach (Customer customer in list)
+            {
+                if (customer.AccountNo == accNo)
+                {
+                    outCustomer = customer;
+                    return true;
+                }
+            }
+            outCustomer = null;
+            return false;
+        }
+
         // Method to get the last account number
         public int getLastAccountNumber()
         {
@@ -101,5 +134,7 @@ namespace DataLayer
             }
             return 0;
         }
+
+        
     }
 }

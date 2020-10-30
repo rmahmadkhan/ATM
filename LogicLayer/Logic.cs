@@ -143,7 +143,62 @@ namespace LogicLayer
             data.AddToFile(customer);
 
             Console.WriteLine($"Account Successfully Created – the account number assigned is: {customer.AccountNo}");
+        }
 
+        // Deletes an account from file
+        public void DeleteAccount()
+        {
+            // Get the account number from user through console
+            int accNo = 0;
+        getAccNo:
+            {
+                Console.Write("Enter the account number which you want to delete: ");
+                try
+                {
+                    accNo = Convert.ToInt32(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid Input! Please try again.");
+                    goto getAccNo;
+                }
+            }
+
+
+            Data data = new Data();
+            Customer customer = new Customer();
+
+            if (data.isInFile(accNo, out customer)) //Checks if the account number is in file
+            {
+                Console.Write($"You wish to delete the account held by Mr {customer.Name}.\n" +
+                    "If this information is correct please re-enter the account number: ");
+                try
+                {
+                    int tempAccNo = Convert.ToInt32(Console.ReadLine());
+                    // if user enters the same account number
+                    if (tempAccNo == accNo)
+                    {
+                        data.DeleteFromFile(customer);
+                        Console.WriteLine("Account Deleted Successfully");
+                        return;
+                    }
+                    // if user enters different account number
+                    else
+                    {
+                        Console.WriteLine("No Account was deleted!");
+                        return;
+                    }
+                }
+                // if user does not enter a number
+                catch (Exception)
+                {
+                    Console.WriteLine("No Account was deleted!");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Account number {accNo} not found!");
+            }
         }
     }
 }
