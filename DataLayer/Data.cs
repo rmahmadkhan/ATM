@@ -79,6 +79,21 @@ namespace DataLayer
             SaveToFile<Customer>(list);
         }
 
+        // Updates a customer object in the file
+        public void UpdateInFile(Customer customer)
+        {
+            List<Customer> list = ReadFile<Customer>("customers.txt");
+            for (int i =0; i<list.Count;i++)
+            {
+                if(list[i].AccountNo == customer.AccountNo)
+                {
+                    list[i] = customer;
+                }
+            }
+            // Overwriting the list to file
+            SaveToFile<Customer>(list);
+        }
+
         // Checks if an Admin object in File
         public bool isInFile(Admin user)
         {

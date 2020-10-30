@@ -140,9 +140,9 @@ namespace ViewLayer
                                 case "2":
                                     logic.DeleteAccount();
                                     break;
-                                //case 3:
-                                //    logic.UpdateAccount();
-                                //    break;
+                                case "3":
+                                    logic.UpdateAccount();
+                                    break;
                                 //    case 4:
                                 //        logic.SearchAccount();
                                 //        break;

@@ -69,14 +69,15 @@ namespace LogicLayer
         getUsername:
             {
                 Console.Write("Username: ");
-                customer.Username = Console.ReadLine();
+                string un = Console.ReadLine();
 
                 // Checks if Username is valid or not (Username can only contain A-Z, a-z & 0-9)
-                if (!isValidUsername(customer.Username))
+                if (un == "" || !isValidUsername(un))
                 {
                     Console.WriteLine("Enter valid Username (Username can only contain A-Z, a-z & 0-9)");
                     goto getUsername;
                 }
+                customer.Username = un;
             }
 
         getPin:
@@ -93,7 +94,11 @@ namespace LogicLayer
             }
             // Gets Holders Name
             Console.Write("Holder's Name: ");
-            customer.Name = Console.ReadLine();
+            string name = Console.ReadLine();
+            if (name != "" || name != " ")
+            {
+                customer.Name = name;
+            }
 
         getAccountType:
             {
@@ -145,14 +150,13 @@ namespace LogicLayer
             Console.WriteLine($"Account Successfully Created – the account number assigned is: {customer.AccountNo}");
         }
 
-        // Deletes an account from file
-        public void DeleteAccount()
+        // Method to get account number from user through console
+        public int getAccNum()
         {
-            // Get the account number from user through console
             int accNo = 0;
         getAccNo:
             {
-                Console.Write("Enter the account number which you want to delete: ");
+                Console.Write("Enter the account number: ");
                 try
                 {
                     accNo = Convert.ToInt32(Console.ReadLine());
@@ -163,7 +167,14 @@ namespace LogicLayer
                     goto getAccNo;
                 }
             }
+            return accNo;
+        }
 
+        // Deletes an account from file
+        public void DeleteAccount()
+        {
+            // Get the account number from user through console
+            int accNo = getAccNum();
 
             Data data = new Data();
             Customer customer = new Customer();
@@ -197,7 +208,102 @@ namespace LogicLayer
             }
             else
             {
-                Console.WriteLine($"Account number {accNo} not found!");
+                Console.WriteLine($"Account number {accNo} does not exist!");
+            }
+        }
+
+        // prints data of an account
+        public void PrintAccontDetails(Customer account)
+        {
+            Console.WriteLine($"Account # {account.AccountNo}\n" +
+                $"Type: {account.AccountType}\n" +
+                $"Holder: {account.Name}\n" + "" +
+                $"Balance: {account.Balance}\n" +
+                $"Status: {account.Status}");
+        }
+
+        // Update any account details
+        public void UpdateAccount()
+        {
+            // Gets the account number from user through console
+            int accNo = getAccNum();
+
+            Data data = new Data();
+            Customer account = new Customer();
+            if (data.isInFile(accNo, out account))
+            {
+                // printing account details 
+                PrintAccontDetails(account);
+                Console.WriteLine("\nPlease enter in the fields you wish to update (leave blank otherwise):\n");
+
+            getUsername:
+                {
+                    Console.Write("Username: ");
+                    string un = Console.ReadLine();
+
+                    // Checks if Username is valid or not (Username can only contain A-Z, a-z & 0-9)
+                    if (!isValidUsername(un))
+                    {
+                        Console.WriteLine("Enter valid Username (Username can only contain A-Z, a-z & 0-9)");
+                        goto getUsername;
+                    }
+                    // if username is valid, changes its value
+                    else if (!string.IsNullOrEmpty(un) && isValidUsername(un))
+                    {
+                        account.Username = un;
+                    }
+                }
+
+            getPin:
+                {
+                    Console.Write("5-digit Pin: ");
+                    string pin = Console.ReadLine();
+
+                    // Checks if Pin is valid or not (Pin is 5-digit & can only contain 0-9)
+                    if (!string.IsNullOrEmpty(pin) && !isValidPin(pin))
+                    {
+                        Console.WriteLine("Enter valid Pin (Pin is 5-digit & can only contain 0-9)");
+                        goto getPin;
+                    }
+                    // if pin is valid, changes its value else do nothing
+                    else if (isValidPin(pin))
+                    {
+                        account.Pin = pin;
+                    }
+                }
+            // Updating the Holder's Name
+                Console.Write("Holder's Name: ");
+                string name = Console.ReadLine();
+                if(!string.IsNullOrEmpty(name) || !string.IsNullOrWhiteSpace(name))
+                {
+                    account.Name = name;
+                }
+            // Gets Status of Account (Active/Disabled)
+            getStatus:
+                {
+                    Console.Write("Status (Active/Disabled): ");
+                    string status = Console.ReadLine();
+
+                    // Checks if Status is valid
+                    if (status != "" && !(status == "Active" || status == "Disabled"))
+                    {
+                        Console.WriteLine("Wrong Input. Enter \"Active\" & \"Disabled\"");
+                        goto getStatus;
+                    }
+                    // changing status if entered valid
+                    else if (status == "Active" || status == "Disabled")
+                    {
+                        account.Status = status;
+                    }
+                }
+
+                data.UpdateInFile(account);
+                Console.WriteLine($"Account # {account.AccountNo} has been successfully been updated.");
+            }
+            else
+            {
+                Console.WriteLine($"Account number {accNo} does not exist!");
+                return;
             }
         }
     }
