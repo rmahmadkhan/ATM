@@ -66,31 +66,62 @@ namespace ViewLayer
                                     "Please Enter your username & 5-digit Pin");
                                 //Decalring an Customer object
                                 Customer customer = new Customer();
-                                bool isSignedin2 = false;
                                 Logic logic2 = new Logic();
-                                while (!isSignedin2)
+
+                            getUsername:
                                 {
                                     // Reading and storing username
                                     Console.Write("Username: ");
                                     customer.Username = Console.ReadLine();
-
-                                    // Reading and storing Pin
-                                    Console.Write("5-digit Pin: ");
-                                    customer.Pin = Console.ReadLine();
-
-                                    // Verifying login details                                
-                                    if (logic2.VerifyLogin(customer))
+                                    if (logic2.isValidUsername(customer.Username))
                                     {
-                                        Console.WriteLine("\n---Loggedin as Customer---\n");
-                                        isSignedin = true;
+                                        if (logic2.isUserActive(customer.Username) == 1)
+                                        {
+                                            int wrong = 0;
+                                        getPin:
+                                            {
+                                                // Reading and storing Pin
+                                                Console.Write("5-digit Pin: ");
+                                                customer.Pin = Console.ReadLine();
+
+                                                // Verifying login details                                
+                                                if (logic2.VerifyLogin(customer))
+                                                {
+                                                    Console.WriteLine("\n---Loggedin as Customer---\n");
+                                                    CustomerScreen();
+                                                }
+                                                else
+                                                {
+                                                    wrong++;
+                                                    if (wrong < 3)
+                                                    {
+                                                        Console.WriteLine("Wrong Pin. Try again.");
+                                                        goto getPin;
+                                                    }
+                                                    else if (wrong == 3)
+                                                    {
+                                                        logic2.DisableAccount(customer.Username);
+                                                        Console.WriteLine("Wrong Pin input 3 times. Account is disabled!");
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (logic2.isUserActive(customer.Username) == 2)
+                                        {
+                                            Console.WriteLine("Your account is disabled. Please contact administrator.");
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Username does not exist! Try again");
+                                            goto getUsername;
+                                        }
                                     }
                                     else
                                     {
-                                        Console.WriteLine("Wrong Username/Pin. Try again.");
+                                        Console.WriteLine("Invalid Input. Enter Again.");
                                     }
                                 }
-                                // As successfully signedin, displaying admin screen
-                                AdminScreen();
                                 break;
                         }
                     }
@@ -179,6 +210,19 @@ namespace ViewLayer
                     Console.WriteLine("Please try again");
                 }
             }
+        }
+
+        public void CustomerScreen()
+        {
+            Console.WriteLine("=====Customer Menu=====");
+            Console.WriteLine("1----Withdraw Cash\n" +
+                "2----Cash Transfer\n" +
+                "3----Deposit Cash\n" +
+                "4----Display Balance\n" +
+                "5----Exit");
+
+            string option = Console.ReadLine();
+            System.Environment.Exit(0);
         }
     }
 }

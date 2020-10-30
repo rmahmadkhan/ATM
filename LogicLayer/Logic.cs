@@ -15,11 +15,18 @@ namespace LogicLayer
             return adminData.isInFile(admin);
         }
 
+        // Method to verify, is username in the file
+        public int isUserActive(string user)
+        {
+            Data data = new Data();
+            return data.isUserActive(user);
+        }
+
         // Method to verify login of customer
         public bool VerifyLogin(Customer customer)
         {
             Data customerData = new Data();
-            return customerData.isInFile(customer);
+            return customerData.canLogin(customer);
         }
 
         // Method to check if Username is valid or not (Username can only contain A-Z, a-z & 0-9)
@@ -58,6 +65,17 @@ namespace LogicLayer
                 }
             }
             return true;
+        }
+
+        // Disables an account
+        public void DisableAccount(string username)
+        {
+            Data data = new Data();
+            Customer customer = data.GetCustomer(username);
+            // updating the status
+            customer.Status = "Disabled";
+            // saving back to file
+            data.UpdateInFile(customer);
         }
 
         // Method to Create Account of a Customer
@@ -420,7 +438,7 @@ namespace LogicLayer
             return accNo;
         }
 
-
+        
         // Returns valid Username or null
         // Method to be used in UpdateAccount() & SearchAccount()
         public string getUsername()

@@ -109,12 +109,30 @@ namespace DataLayer
         }
 
         // Checks if a Customer object in File
-        public bool isInFile(Customer user)
+        public int isUserActive(string user)
         {
             List<Customer> list = ReadFile<Customer>("customers.txt");
             foreach (Customer customer in list)
             {
-                if (customer.Username == user.Username && customer.Pin == user.Pin)
+                if (customer.Username == user && customer.Status == "Active")
+                {
+                    return 1;
+                }
+                else if(customer.Username == user && customer.Status == "Disabled")
+                {
+                    return 2;
+                }
+            }
+            return 0;
+        }
+
+        // Checks if a user is active or not
+        public bool canLogin(Customer customer)
+        {
+            List<Customer> list = ReadFile<Customer>("customers.txt");
+            foreach (Customer user in list)
+            {
+                if (customer.Username == user.Username && customer.Pin == user.Pin && user.Status == "Active")
                 {
                     return true;
                 }
@@ -136,6 +154,20 @@ namespace DataLayer
             }
             outCustomer = null;
             return false;
+        }
+
+        // Returns an object if given username
+        public Customer GetCustomer(string username)
+        {
+            List<Customer> list = ReadFile<Customer>("customers.txt");
+            foreach(Customer customer in list)
+            {
+                if(customer.Username == username)
+                {
+                    return customer;
+                }
+            }
+            return null;
         }
 
         // Method to get the last account number
