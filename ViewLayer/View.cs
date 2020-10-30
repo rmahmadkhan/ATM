@@ -143,9 +143,9 @@ namespace ViewLayer
                                 case "3":
                                     logic.UpdateAccount();
                                     break;
-                                //    case 4:
-                                //        logic.SearchAccount();
-                                //        break;
+                                case "4":
+                                    logic.SearchAccount();
+                                    break;
                                 //    case 5:
                                 //        logic.ViewReports();
                                 //        break;
