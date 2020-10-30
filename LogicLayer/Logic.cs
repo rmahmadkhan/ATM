@@ -120,29 +120,30 @@ namespace LogicLayer
                     Console.WriteLine("Wrong Input. Enter numbers only.");
                     goto getBalance;
                 }
-            // Gets Status of Account (Active/Disabled)
-            getStatus:
-                {
-                    Console.Write("Status (Active/Disabled): ");
-                    customer.Status = Console.ReadLine();
-
-                    // Checks if Status is valid
-                    if (!(customer.Status == "Active" || customer.Status == "Disabled"))
-                    {
-                        Console.WriteLine("Wrong Input. Enter \"Active\" & \"Disabled\"");
-                        goto getStatus;
-                    }
-                }
-                Data data = new Data();
-                
-                // Assiging Account Number
-                customer.AccountNo = data.getLastAccountNumber()+1;
-
-                // Appending Customer to file
-                data.AddToFile(customer);
-
-                Console.WriteLine($"Account Successfully Created – the account number assigned is: {customer.AccountNo}");
             }
+        // Gets Status of Account (Active/Disabled)
+        getStatus:
+            {
+                Console.Write("Status (Active/Disabled): ");
+                customer.Status = Console.ReadLine();
+
+                // Checks if Status is valid
+                if (!(customer.Status == "Active" || customer.Status == "Disabled"))
+                {
+                    Console.WriteLine("Wrong Input. Enter \"Active\" & \"Disabled\"");
+                    goto getStatus;
+                }
+            }
+            Data data = new Data();
+
+            // Assiging Account Number
+            customer.AccountNo = data.getLastAccountNumber() + 1;
+
+            // Appending Customer to file
+            data.AddToFile(customer);
+
+            Console.WriteLine($"Account Successfully Created – the account number assigned is: {customer.AccountNo}");
+
         }
     }
 }

@@ -10,18 +10,39 @@ namespace DataLayer
 {
     public class Data
     {
-        //Save an Admin object to File in Json format
-        public void AddToFile(Admin admin)
+        // Appends an object to File in Json format
+        public void AddToFile<T>(T user)
         {
-            string jsonOutput = JsonSerializer.Serialize(admin);
-            File.AppendAllText("admins.txt", jsonOutput + Environment.NewLine);
+            string jsonOutput = JsonSerializer.Serialize(user);
+            if (user is Admin)
+            {
+                File.AppendAllText("admins.txt", jsonOutput + Environment.NewLine);
+            }
+            else if(user is Customer)
+            {
+                File.AppendAllText("customers.txt", jsonOutput + Environment.NewLine);
+            }
         }
 
-        // Save a Customer object to file in Json format
-        public void AddToFile(Customer customer)
+        // Clears Last data & Save new List to file in Json format
+        public void SaveToFile<T>(List<T> list)
         {
-            string jsonOutput = JsonSerializer.Serialize(customer);
-            File.AppendAllText("customers.txt", jsonOutput + Environment.NewLine);
+            // Overwrite the file with first object in the list
+            string jsonOutput = JsonSerializer.Serialize(list[0]);
+            if (list[0] is Admin)
+            {
+                File.WriteAllText("admins.txt", jsonOutput + Environment.NewLine);
+            }
+            else if(list[0] is Customer)
+            {
+                File.WriteAllText("customers.txt", jsonOutput + Environment.NewLine);
+            }
+
+            // Appends the other objects of list to the file
+            for(int i=1;i<list.Count;i++)
+            {
+                AddToFile(list[i]);
+            }
         }
 
         // Returns a list of objects from file
@@ -55,7 +76,7 @@ namespace DataLayer
             return false;
         }
 
-        // Checks if an Customer object in File
+        // Checks if a Customer object in File
         public bool isInFile(Customer user)
         {
             List<Customer> list = ReadFile<Customer>("customers.txt");
