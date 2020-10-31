@@ -2,6 +2,7 @@
 using DataLayer;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace LogicLayer
@@ -862,17 +863,28 @@ namespace LogicLayer
             return transaction;
         }
 
+        // Method to display balance
+        public void DisplayBalance(string username)
+        {
+            Data data = new Data();
+            Customer customer = new Customer();
+            customer = data.GetCustomer(username);
+            Console.WriteLine($"Account # {customer.AccountNo}");
+            // Getting today's date and putting it in a string
+            DateTime date = DateTime.Now;
+            string d = date.ToString("dd/MM/yyyy");
+            Console.WriteLine($"Date: {d}\n");
+            Console.WriteLine($"Balance: {customer.Balance}");
+        }
+
         // Method to Print Receipt
-        // To be used in WithdrawCash() & CashTransfer() & DepositCash() & DisplayBalance()
+        // To be used in WithdrawCash() & CashTransfer() & DepositCash()
         public void PrintReceipt(Transaction transaction, string t)
         {
             Console.WriteLine($"\nAccount # {transaction.AccountNo}");
             Console.WriteLine($"Date: {transaction.Date}\n");
-            // In case of DisplayBalance() the string will be empty
-            if (!string.IsNullOrEmpty(t))
-            {
-                Console.WriteLine($"{t}: {transaction.TransactionAmount}");
-            }
+
+            Console.WriteLine($"{t}: {transaction.TransactionAmount}");
             Console.WriteLine($"Balance: {transaction.Balance}");
         }
     }

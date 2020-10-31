@@ -244,7 +244,7 @@ namespace ViewLayer
                                     logic.CashDeposit(username);
                                     break;
                                 case "4":
-                                    //logic.DisplayBalance(username);
+                                    logic.DisplayBalance(username);
                                     break;
                                 case "5":
                                     System.Environment.Exit(0);
