@@ -14,7 +14,7 @@ namespace ViewLayer
                             "Login as:\n" +
                             "1----Administrator\n" +
                             "2----Customer\n\n" +
-                            "Enter 1 or 2\n");
+                            "Enter 1 or 2:");
 
             try
             {
@@ -88,7 +88,7 @@ namespace ViewLayer
                                                 if (logic2.VerifyLogin(customer))
                                                 {
                                                     Console.WriteLine("\n---Loggedin as Customer---\n");
-                                                    CustomerScreen();
+                                                    CustomerScreen(customer.Username);
                                                 }
                                                 else
                                                 {
@@ -212,17 +212,69 @@ namespace ViewLayer
             }
         }
 
-        public void CustomerScreen()
+        public void CustomerScreen(string username)
         {
-            Console.WriteLine("=====Customer Menu=====");
-            Console.WriteLine("1----Withdraw Cash\n" +
-                "2----Cash Transfer\n" +
-                "3----Deposit Cash\n" +
-                "4----Display Balance\n" +
-                "5----Exit");
+        customerScreen:
+            {
+                Console.WriteLine("=====Customer Menu=====");
+                Console.WriteLine("1----Withdraw Cash\n" +
+                    "2----Cash Transfer\n" +
+                    "3----Deposit Cash\n" +
+                    "4----Display Balance\n" +
+                    "5----Exit");
 
-            string option = Console.ReadLine();
-            System.Environment.Exit(0);
+                try
+                {
+                getCustomerOption:
+                    {
+                        string option = Console.ReadLine();
+                        // Checking if input is correct
+                        if (option == "1" || option == "2" || option == "3" || option == "4" || option == "5")
+                        {
+                            Logic logic = new Logic();
+                            switch (option)
+                            {
+                                case "1":
+                                    logic.WithdrawCash(username);
+                                    break;
+                                case "2":
+                                    //logic.CashTransfer();
+                                    break;
+                                case "3":
+                                    //logic.DepositCash();
+                                    break;
+                                case "4":
+                                    //logic.DisplayBalance();
+                                    break;
+                                case "5":
+                                    System.Environment.Exit(0);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Wrong Input. Please try again");
+                            goto getCustomerOption;
+                        }
+                    }
+                    // Asks user if to continue or not
+                    Console.Write("\nDo you wish to continue(y/n): ");
+                    string wish = Console.ReadLine();
+                    if (wish == "y" || wish == "Y")
+                    {
+                        goto customerScreen;
+                    }
+                    else
+                    {
+                        System.Environment.Exit(0);
+                    }
+
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Please try again");
+                }
+            }
         }
     }
 }

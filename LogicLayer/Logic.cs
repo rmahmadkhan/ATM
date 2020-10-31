@@ -363,7 +363,7 @@ namespace LogicLayer
                     {
                         customer.Status = c.Status;
                     }
-                    
+
                     // if given object matches the object in the list, adding it to the list
                     if (customer.AccountNo == c.AccountNo &&
                         customer.Username == c.Username &&
@@ -438,7 +438,7 @@ namespace LogicLayer
             return accNo;
         }
 
-        
+
         // Returns valid Username or null
         // Method to be used in UpdateAccount() & SearchAccount()
         public string getUsername()
@@ -542,7 +542,200 @@ namespace LogicLayer
             }
         }
 
+        // ******** CUSTOMER LOGIC ********
 
+        // Method to withdraw cash
+        public void WithdrawCash(string username)
+        {
+            Console.WriteLine("----- Withdraw Cash -----\n");
+        getOption:
+            {
+                Console.WriteLine("1---Fast Cash\n" +
+                    "2---Normal Cash");
+                Console.Write("\nPlease select a mode of withdrawl (1/2): ");
+                try
+                {
+                    // Getting input if user wants Fast Cash or Normal Cash
+                    string option = Console.ReadLine();
+                    if (option == "1" || option == "2")
+                    {
+                        switch (option)
+                        {
+                            // In case of Fast Cash
+                            case "1":
+                                Console.Clear();
+                                Console.WriteLine("==== FAST CASH ====\n");
+                                // Putting all possible choices of Fast Cash in a list
+                                List<int> FastCashOptions = new List<int>(new int[] { 500, 1000, 2000, 5000, 10000, 15000, 20000 });
+                                // Printing all possible choices
+                                Console.WriteLine($"1---{FastCashOptions[0]}\n" +
+                                    $"2---{FastCashOptions[1]}\n" +
+                                    $"3---{FastCashOptions[2]}\n" +
+                                    $"4---{FastCashOptions[3]}\n" +
+                                    $"5---{FastCashOptions[4]}\n" +
+                                    $"6---{FastCashOptions[5]}\n" +
+                                    $"7---{FastCashOptions[6]}\n");
+                            getDomination:
+                                {
+                                    // Getting input that which denomination the user want
+                                    Console.Write("Select one of the denominations of money: ");
+                                    string op = Console.ReadLine();
+                                    if (op == "1" || op == "2" || op == "3" || op == "4" || op == "5" || op == "6" || op == "7")
+                                    {
+                                        Data data = new Data();
+                                        int opt = Convert.ToInt32(op);
+                                        Console.Write($"Are you sure you want to withdraw Rs.{FastCashOptions[opt - 1]} (Y/N)? ");
+                                        if (Console.ReadLine() == "Y")
+                                        {
+                                            Customer customer = data.GetCustomer(username);
+                                            int totalAmount = data.TodaysTransactionsAmount(customer.AccountNo);
+                                            // Checking if the withdrawl amount exceeds 20k
+                                            if ((totalAmount + FastCashOptions[opt - 1]) <= 20000)
+                                            {
+                                                // Checking if user has sufficent balance
+                                                if (customer != null && customer.Balance > FastCashOptions[opt - 1])
+                                                {
+                                                    // Doing the transaction
+                                                    data.DeductBalance(customer, FastCashOptions[opt - 1]);
+                                                    Console.WriteLine("\nCash Successfully Withdrawn!");
 
+                                                    // Adding data to Transaction variable
+                                                    Transaction transaction = new Transaction();
+                                                    transaction.AccountNo = customer.AccountNo;
+                                                    transaction.Username = customer.Username;
+                                                    transaction.HoldersName = customer.Name;
+                                                    transaction.TransactionType = "Cash Withdrawl";
+                                                    transaction.TransactionAmount = FastCashOptions[opt - 1];
+                                                    DateTime date = DateTime.Now;
+                                                    transaction.Date = date.ToString("dd/MM/yyyy");
+                                                    transaction.Balance = customer.Balance;
+
+                                                    // Appending transaction in transactions.txt
+                                                    data.AddToFile<Transaction>(transaction);
+
+                                                    // Asking if user wants a receipt
+                                                    Console.Write("Do you wish to print a receipt(Y/N)? ");
+                                                    if (Console.ReadLine() == "Y")
+                                                    {
+                                                        // printing receipt
+                                                        PrintReceipt(transaction, "Withdrawn");
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("Insufficent Balance. Transaction failed!");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine($"You have already withdrawn Rs.{totalAmount} today.\n"+
+                                                    $"Cannot withdrawn more than Rs. 20,000 on same day.");
+                                            }
+                                        }
+                                        // In case user did not confirm for transaction
+                                        else
+                                        {
+                                            Console.WriteLine("Transaction was not confirmed. Transaction Failed!");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Invalid Input. Please try again.");
+                                        goto getDomination;
+                                    }
+                                }
+                                break;
+                            // In case of Normal Cash
+                            case "2":
+                                Console.Clear();
+                                Console.WriteLine("==== NORMAL CASH ====\n");
+                                getAmount:
+                                {
+                                    Console.Write("Enter the withdrawal amount: ");
+                                    Data data = new Data();
+                                    try
+                                    {
+                                        int amount = Convert.ToInt32(Console.ReadLine());
+                                        // Asking for Confirmation
+                                        Console.Write($"Are you sure you want to withdraw Rs.{amount} (Y/N)? ");
+                                        if (Console.ReadLine() == "Y")
+                                        {
+                                            Customer customer = data.GetCustomer(username);
+                                            // Checking if user has sufficent balance
+                                            if (customer != null && customer.Balance > amount)
+                                            {
+                                                // Doing the transaction
+                                                data.DeductBalance(customer, amount);
+                                                Console.WriteLine("\nCash Successfully Withdrawn!");
+
+                                                // Adding data to Transaction variable
+                                                Transaction transaction = new Transaction();
+                                                transaction.AccountNo = customer.AccountNo;
+                                                transaction.Username = customer.Username;
+                                                transaction.HoldersName = customer.Name;
+                                                transaction.TransactionType = "Cash Withdrawl";
+                                                transaction.TransactionAmount = amount;
+                                                DateTime date = DateTime.Now;
+                                                transaction.Date = date.ToString("dd/MM/yyyy");
+                                                transaction.Balance = customer.Balance;
+
+                                                // Appending transaction in transactions.txt
+                                                data.AddToFile<Transaction>(transaction);
+
+                                                // Asking if user wants a receipt
+                                                Console.Write("Do you wish to print a receipt(Y/N)? ");
+                                                if (Console.ReadLine() == "Y")
+                                                {
+                                                    // printing receipt
+                                                    PrintReceipt(transaction, "Withdrawn");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("Insufficent Balance. Transaction failed!");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Invalid Input. Try again.");
+                                            goto case "2";
+                                        }
+                                    }
+                                    catch(Exception)
+                                    {
+                                        Console.WriteLine("Invalid input. Pleas try again!");
+                                        goto getAmount;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Input. Please try again");
+                        goto getOption;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid Input!!!");
+                    goto getOption;
+                }
+            }
+        }
+
+        // Method to Print Receipt
+        // To be used in WithdrawCash() & CashTransfer() & DepositCash() & DisplayBalance()
+        public void PrintReceipt(Transaction transaction, string t)
+        {
+            Console.WriteLine($"\nAccount # {transaction.AccountNo}");
+            Console.WriteLine($"Date: {transaction.Date}\n");
+            // In case of DisplayBalance() the string will be empty
+            if (!string.IsNullOrEmpty(t))
+            {
+                Console.WriteLine($"{t}: {transaction.TransactionAmount}");
+            }
+            Console.WriteLine($"Balance: {transaction.Balance}");
+        }
     }
 }

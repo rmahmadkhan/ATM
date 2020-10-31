@@ -11,16 +11,20 @@ namespace DataLayer
     public class Data
     {
         // Appends an object to File in Json format
-        public void AddToFile<T>(T user)
+        public void AddToFile<T>(T obj)
         {
-            string jsonOutput = JsonSerializer.Serialize(user);
-            if (user is Admin)
+            string jsonOutput = JsonSerializer.Serialize(obj);
+            if (obj is Admin)
             {
                 File.AppendAllText("admins.txt", jsonOutput + Environment.NewLine);
             }
-            else if(user is Customer)
+            else if(obj is Customer)
             {
                 File.AppendAllText("customers.txt", jsonOutput + Environment.NewLine);
+            }
+            else if (obj is Transaction)
+            {
+                File.AppendAllText("transactions.txt", jsonOutput + Environment.NewLine);
             }
         }
 
@@ -182,6 +186,28 @@ namespace DataLayer
             return 0;
         }
 
+        // Deduct amount from balance of an account and update it in file
+        public void DeductBalance(Customer c, int amount)
+        {
+                    c.Balance -= amount;
+                    UpdateInFile(c);
+        }
         
+        // Returns total ammount a customer has withdrawn today
+        public int TodaysTransactionsAmount(int accNo)
+        {
+            List<Transaction> list = ReadFile<Transaction>("transactions.txt");
+            int totalAmount = 0;
+
+            // Checking the transactions and adding the amount
+            foreach(Transaction t in list)
+            {
+                if(t.AccountNo == accNo)
+                {
+                    totalAmount += t.TransactionAmount;
+                }
+            }
+            return totalAmount;
+        }
     }
 }
