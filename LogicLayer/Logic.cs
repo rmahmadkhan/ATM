@@ -543,6 +543,164 @@ namespace LogicLayer
             }
         }
 
+        // Method to print reports
+        public void ViewReports()
+        {
+        getOption:
+            {
+                Console.WriteLine("----- VIEW REPORTS -----\n");
+                Console.WriteLine("1---Accounts By Amount\n" +
+                    "2---Accounts By Date");
+                // Reading option
+                string option = Console.ReadLine();
+                Data data = new Data();
+                if (option == "1")
+                {
+                    Console.WriteLine("Please provide two amounts to get data in between them");
+                    int min, max;
+                getMin:
+                    {
+                        Console.Write("Enter first amount: ");
+                        try
+                        {
+                            min = Convert.ToInt32(Console.ReadLine());
+                        }
+                        // if user enters other than number
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Invalid Input. Try again.");
+                            goto getMin;
+                        }
+                    }
+                getMax:
+                    {
+                        Console.Write("Enter second amount: ");
+                        try
+                        {
+                            max = Convert.ToInt32(Console.ReadLine());
+                        }
+                        // if user enters other than number
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Invalid Input. Try again.");
+                            goto getMax;
+                        }
+                    }
+                    // Checking if user entered min value at max then interchanging them
+                    if (min > max)
+                    {
+                        int t = max;
+                        max = min;
+                        min = t;
+                    }
+                    // Getting the list of customer objects from file
+                    List<Customer> list = data.ReadFile<Customer>("customers.txt");
+                    // Printing the result
+                    Console.WriteLine("\n==== SEARCH RESULTS ====\n");
+                    if (list.Count > 0)
+                    {
+                        Console.WriteLine("Account No".PadRight(12)
+                                    + "Username".PadRight(10)
+                                    + "Holder's Name".PadRight(15)
+                                    + "Type".PadRight(9)
+                                    + "Balance".PadRight(10)
+                                    + "Status\n");
+                        foreach (Customer c in list)
+                        {
+                            if (c.Balance >= min && c.Balance <= max)
+                            {
+                                Console.WriteLine(Convert.ToString(c.AccountNo).PadRight(12)
+                                    + c.Username.PadRight(10)
+                                    + c.Name.PadRight(15)
+                                    + c.AccountType.PadRight(9)
+                                    + Convert.ToString(c.Balance).PadRight(10)
+                                    + c.Status);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("***NO DATA FOUND MATCHING WITH GIVEN DETAILS***");
+                    }
+                }
+                else if (option == "2")
+                {
+                    Console.WriteLine("Please provide two dates in given format to get data in between them");
+                    string startDate, endDate;
+                    string formatString = "dd/MM/yyyy";
+                    DateTime d1, d2;
+                getStartDate:
+                    {
+                        Console.Write("Enter first date (dd/MM/yyyy): ");
+                        startDate = Console.ReadLine();
+                        try
+                        {
+                            d1 = DateTime.ParseExact(startDate, formatString, System.Globalization.CultureInfo.InvariantCulture);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Invalid input. Try again.");
+                            goto getStartDate;
+                        }
+                    }
+                getEndDate:
+                    {
+                        Console.Write("Enter second date (dd/MM/yyyy): ");
+                        endDate = Console.ReadLine();
+                        try
+                        {
+                            d2 = DateTime.ParseExact(endDate, formatString, System.Globalization.CultureInfo.InvariantCulture);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Invalid input. Try again.");
+                            goto getEndDate;
+                        }
+                    }
+                    // Checks if user entered previous date at ending date and then interchaning them
+                    if (d1 > d2)
+                    {
+                        DateTime dtemp = d2;
+                        d2 = d1;
+                        d1 = dtemp;
+                    }
+                    // Getting the list of transaction objects from file
+                    List<Transaction> transactions = data.ReadFile<Transaction>("transactions.txt");
+                    // Printing the result
+                    Console.WriteLine("\n==== SEARCH RESULTS ====\n");
+                    if (transactions.Count > 0)
+                    {
+                        Console.WriteLine("Transaction Type".PadRight(18)
+                                    + "Username".PadRight(10)
+                                    + "Holder's Name".PadRight(15)
+                                    + "Amount".PadRight(10)
+                                    + "Date\n");
+                        foreach (Transaction t in transactions)
+                        {
+                            DateTime d = DateTime.ParseExact(t.Date, formatString, System.Globalization.CultureInfo.InvariantCulture);
+                            if (d >= d1 && d <= d2)
+                            {
+                                Console.WriteLine(Convert.ToString(t.TransactionType).PadRight(18)
+                                    + t.Username.PadRight(10)
+                                    + t.HoldersName.PadRight(15)
+                                    + Convert.ToString(t.TransactionAmount).PadRight(10)
+                                    + t.Date);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("***NO DATA FOUND MATCHING WITH GIVEN DETAILS***");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid Input. Try again.");
+                    goto getOption;
+                }
+            }
+        }
+
         // ******** CUSTOMER LOGIC ********
 
         // Method to withdraw cash

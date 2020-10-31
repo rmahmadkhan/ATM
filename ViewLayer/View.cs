@@ -177,9 +177,9 @@ namespace ViewLayer
                                 case "4":
                                     logic.SearchAccount();
                                     break;
-                                //    case 5:
-                                //        logic.ViewReports();
-                                //        break;
+                                case "5":
+                                    logic.ViewReports();
+                                    break;
                                 // Exits the applicaion
                                 case "6":
                                     System.Environment.Exit(0);
