@@ -233,7 +233,7 @@ namespace LogicLayer
                 }
                 // Updates Pin
                 string pin = getPin();
-                if (string.IsNullOrEmpty(pin))
+                if (!string.IsNullOrEmpty(pin))
                 {
                     account.Pin = pin;
                 }
@@ -545,7 +545,7 @@ namespace LogicLayer
         // ******** CUSTOMER LOGIC ********
 
         // Method to withdraw cash
-        public void WithdrawCash(string username)
+        public void CashWithdraw(string username)
         {
             Console.WriteLine("----- Withdraw Cash -----\n");
         getOption:
@@ -599,19 +599,8 @@ namespace LogicLayer
                                                     data.DeductBalance(customer, FastCashOptions[opt - 1]);
                                                     Console.WriteLine("\nCash Successfully Withdrawn!");
 
-                                                    // Adding data to Transaction variable
-                                                    Transaction transaction = new Transaction();
-                                                    transaction.AccountNo = customer.AccountNo;
-                                                    transaction.Username = customer.Username;
-                                                    transaction.HoldersName = customer.Name;
-                                                    transaction.TransactionType = "Cash Withdrawl";
-                                                    transaction.TransactionAmount = FastCashOptions[opt - 1];
-                                                    DateTime date = DateTime.Now;
-                                                    transaction.Date = date.ToString("dd/MM/yyyy");
-                                                    transaction.Balance = customer.Balance;
-
-                                                    // Appending transaction in transactions.txt
-                                                    data.AddToFile<Transaction>(transaction);
+                                                    // Making and recording transaction to file
+                                                    Transaction transaction = MakeTransaction(customer, FastCashOptions[opt - 1], "Cash Withdrawl");
 
                                                     // Asking if user wants a receipt
                                                     Console.Write("Do you wish to print a receipt(Y/N)? ");
@@ -628,7 +617,7 @@ namespace LogicLayer
                                             }
                                             else
                                             {
-                                                Console.WriteLine($"You have already withdrawn Rs.{totalAmount} today.\n"+
+                                                Console.WriteLine($"You have already withdrawn Rs.{totalAmount} today.\n" +
                                                     $"Cannot withdrawn more than Rs. 20,000 on same day.");
                                             }
                                         }
@@ -649,7 +638,7 @@ namespace LogicLayer
                             case "2":
                                 Console.Clear();
                                 Console.WriteLine("==== NORMAL CASH ====\n");
-                                getAmount:
+                            getAmount:
                                 {
                                     Console.Write("Enter the withdrawal amount: ");
                                     Data data = new Data();
@@ -668,23 +657,13 @@ namespace LogicLayer
                                                 data.DeductBalance(customer, amount);
                                                 Console.WriteLine("\nCash Successfully Withdrawn!");
 
-                                                // Adding data to Transaction variable
-                                                Transaction transaction = new Transaction();
-                                                transaction.AccountNo = customer.AccountNo;
-                                                transaction.Username = customer.Username;
-                                                transaction.HoldersName = customer.Name;
-                                                transaction.TransactionType = "Cash Withdrawl";
-                                                transaction.TransactionAmount = amount;
-                                                DateTime date = DateTime.Now;
-                                                transaction.Date = date.ToString("dd/MM/yyyy");
-                                                transaction.Balance = customer.Balance;
-
-                                                // Appending transaction in transactions.txt
-                                                data.AddToFile<Transaction>(transaction);
+                                                // Making and recording transaction to file
+                                                Transaction transaction = MakeTransaction(customer, amount, "Cash Withdrawl");
 
                                                 // Asking if user wants a receipt
                                                 Console.Write("Do you wish to print a receipt(Y/N)? ");
-                                                if (Console.ReadLine() == "Y")
+                                                string y = Console.ReadLine();
+                                                if (y == "Y" || y == "y")
                                                 {
                                                     // printing receipt
                                                     PrintReceipt(transaction, "Withdrawn");
@@ -701,7 +680,7 @@ namespace LogicLayer
                                             goto case "2";
                                         }
                                     }
-                                    catch(Exception)
+                                    catch (Exception)
                                     {
                                         Console.WriteLine("Invalid input. Pleas try again!");
                                         goto getAmount;
@@ -722,6 +701,165 @@ namespace LogicLayer
                     goto getOption;
                 }
             }
+        }
+
+        // Method to Cash Transfer
+        public void CashTransfer(string username)
+        {
+            Data data = new Data();
+            // Gets Customer object against given username
+            Customer sender = new Customer();
+            sender = data.GetCustomer(username);
+        getAmount:
+            {
+                Console.WriteLine("----- Transfer Cash -----\n");
+                Console.Write("Enter amount in multiples of 500: ");
+                try
+                {
+                    // Reads amount in input
+                    int amount = Convert.ToInt32(Console.ReadLine());
+                    if (amount % 500 == 0)
+                    {
+                        if (amount <= sender.Balance)
+                        {
+                        getAccNo:
+                            {
+                                Console.Write("Enter the account number to which you want to transfer: ");
+                                try
+                                {
+                                    int accNo = Convert.ToInt32(Console.ReadLine());
+                                    Customer reciever = new Customer();
+                                    if (data.isInFile(accNo, out reciever))
+                                    {
+                                        Console.Write($"You wish to deposit Rs. {amount} in account held by Mr. {reciever.Name}.\n" +
+                                            "If this information is correct please re-enter the account number: ");
+                                        try
+                                        {
+                                            int accNo2 = Convert.ToInt32(Console.ReadLine());
+                                            // checking if user entered the same account number both times
+                                            if (accNo == accNo2)
+                                            {
+                                                // Deduct amount from Sender's account
+                                                data.DeductBalance(sender, amount);
+
+                                                // Add amount to receiver's account
+                                                data.AddAmount(reciever, amount);
+
+                                                Console.WriteLine("Transaction confirmed.");
+
+                                                // Making and recording transaction to file for Sender
+                                                Transaction transaction = MakeTransaction(sender, amount, "Cash Transfer");
+
+                                                // Making and recording transaction to file for Receiver
+                                                Transaction transaction1 = MakeTransaction(reciever, amount, "Cash Transfer");
+
+                                                // Asking if user wants a receipt
+                                                Console.Write("Do you wish to print a receipt(Y/N)? ");
+                                                string y = Console.ReadLine();
+                                                if (y == "Y" || y == "y")
+                                                {
+                                                    // printing receipt
+                                                    PrintReceipt(transaction, "Amount Transfered");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("Did not enter same account number. Trasaction Failed!");
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Console.WriteLine("Did not enter same account number. Trasaction Failed!");
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Given Account does not exist!!");
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    Console.WriteLine("Invalid Input. Try again!");
+                                    goto getAccNo;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Insufficent Balance!!!");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Input. Try again!");
+                        goto getAmount;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid Input. Try again!");
+                    goto getAmount;
+                }
+            }
+        }
+
+        // Method to do a Deposit
+        public void CashDeposit(string username)
+        {
+            Data data = new Data();
+            // Gets Customer object against given username
+            Customer customer = new Customer();
+            customer = data.GetCustomer(username);
+        getAmount:
+            {
+                Console.WriteLine("----- Deposit Cash -----\n");
+                Console.Write("Enter amount to deposit: ");
+                try
+                {
+                    int amount = Convert.ToInt32(Console.ReadLine());
+                    // Add amount to the account
+                    data.AddAmount(customer, amount);
+                    Console.WriteLine("Cash Deposited Successfully.");
+
+                    // Making and recording transaction to file for Sender
+                    Transaction transaction = MakeTransaction(customer, amount, "Cash Deposit");
+
+                    // Asking if user wants a receipt
+                    Console.Write("Do you wish to print a receipt(Y/N)? ");
+                    string y = Console.ReadLine();
+                    if (y == "Y" || y == "y")
+                    {
+                        // printing receipt
+                        PrintReceipt(transaction, "Amount Deposited");
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid Input. Try again!");
+                    goto getAmount;
+                }
+            }
+        }
+
+        // Method to make a transaction and record in the file
+        // To be used in CashWithdraw() & CashTransfer() & CashDeposit()
+        public Transaction MakeTransaction(Customer c, int amount, string type)
+        {
+            // Adding data to Transaction variable for Sender
+            Transaction transaction = new Transaction();
+            transaction.AccountNo = c.AccountNo;
+            transaction.Username = c.Username;
+            transaction.HoldersName = c.Name;
+            transaction.TransactionType = type;
+            transaction.TransactionAmount = amount;
+            DateTime date = DateTime.Now;
+            transaction.Date = date.ToString("dd/MM/yyyy");
+            transaction.Balance = c.Balance;
+            // Appending transaction in transactions.txt
+            Data data = new Data();
+            data.AddToFile<Transaction>(transaction);
+            return transaction;
         }
 
         // Method to Print Receipt

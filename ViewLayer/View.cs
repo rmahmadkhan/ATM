@@ -193,7 +193,7 @@ namespace ViewLayer
                         }
                     }
                     // Asks user if to continue or not
-                    Console.Write("\nDo you wish to continue(y/n): ");
+                    Console.Write("\nDo you wish to continue(Y/N): ");
                     string wish = Console.ReadLine();
                     if (wish == "y" || wish == "Y")
                     {
@@ -235,16 +235,16 @@ namespace ViewLayer
                             switch (option)
                             {
                                 case "1":
-                                    logic.WithdrawCash(username);
+                                    logic.CashWithdraw(username);
                                     break;
                                 case "2":
-                                    //logic.CashTransfer();
+                                    logic.CashTransfer(username);
                                     break;
                                 case "3":
-                                    //logic.DepositCash();
+                                    logic.CashDeposit(username);
                                     break;
                                 case "4":
-                                    //logic.DisplayBalance();
+                                    //logic.DisplayBalance(username);
                                     break;
                                 case "5":
                                     System.Environment.Exit(0);
@@ -258,7 +258,7 @@ namespace ViewLayer
                         }
                     }
                     // Asks user if to continue or not
-                    Console.Write("\nDo you wish to continue(y/n): ");
+                    Console.Write("\nDo you wish to continue(Y/N): ");
                     string wish = Console.ReadLine();
                     if (wish == "y" || wish == "Y")
                     {

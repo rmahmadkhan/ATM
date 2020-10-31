@@ -174,6 +174,20 @@ namespace DataLayer
             return null;
         }
 
+        // Returns an object if given account number
+        public Customer GetCustomer(int accNo)
+        {
+            List<Customer> list = ReadFile<Customer>("customers.txt");
+            foreach (Customer customer in list)
+            {
+                if (customer.AccountNo == accNo)
+                {
+                    return customer;
+                }
+            }
+            return null;
+        }
+
         // Method to get the last account number
         public int getLastAccountNumber()
         {
@@ -192,7 +206,14 @@ namespace DataLayer
                     c.Balance -= amount;
                     UpdateInFile(c);
         }
-        
+
+        // Add amount to balance of an account and update it in file
+        public void AddAmount(Customer c, int amount)
+        {
+            c.Balance += amount;
+            UpdateInFile(c);
+        }
+
         // Returns total ammount a customer has withdrawn today
         public int TodaysTransactionsAmount(int accNo)
         {
