@@ -68,6 +68,34 @@ namespace LogicLayer
             return true;
         }
 
+        // Encryption Method
+        // For alphabets we swap A with Z, B with Y and so on.
+        // A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+        // Z Y X W V U T S R Q P O N M L K J I H G F E D C B A
+        // For Number we have
+        // 0123456789
+        // 9876543210
+        public string EncryptionDecryption(string username)
+        {
+            string output = "";
+            foreach (char c in username)
+            {
+                if (c >= 'A' && c <= 'Z')
+                {
+                    output += Convert.ToChar(('Z' - (c - 'A')));
+                }
+                else if (c >= 'a' && c <= 'z')
+                {
+                    output += Convert.ToChar(('z' - (c - 'a')));
+                }
+                else if (c >= '0' && c <= '9')
+                {
+                    output += (9 - char.GetNumericValue(c));
+                }
+            }
+            return output;
+        }
+
         // Disables an account
         public void DisableAccount(string username)
         {
@@ -82,6 +110,7 @@ namespace LogicLayer
         // Method to Create Account of a Customer
         public void CreateAccount()
         {
+            Data data = new Data();
             Customer customer = new Customer();
             Console.WriteLine("---Creating New Account---\n" +
                 "Enter User Details");
@@ -96,7 +125,15 @@ namespace LogicLayer
                     Console.WriteLine("Enter valid Username (Username can only contain A-Z, a-z & 0-9)");
                     goto getUsername;
                 }
-                customer.Username = un;
+
+                // Doing encryption
+                customer.Username = EncryptionDecryption(un);
+                // If username is already assigned to someone
+                if (data.isInFile(customer.Username))
+                {
+                    Console.WriteLine("Username already exists!! Enter again.");
+                    goto getUsername;
+                }
             }
 
         getPin:
@@ -110,6 +147,8 @@ namespace LogicLayer
                     Console.WriteLine("Enter valid Pin (Pin is 5-digit & can only contain 0-9)");
                     goto getPin;
                 }
+                // Doing Encryption
+                customer.Pin = EncryptionDecryption(customer.Pin);
             }
             // Gets Holders Name
             Console.Write("Holder's Name: ");
@@ -158,7 +197,6 @@ namespace LogicLayer
                     goto getStatus;
                 }
             }
-            Data data = new Data();
 
             // Assiging Account Number
             customer.AccountNo = data.getLastAccountNumber() + 1;
@@ -226,17 +264,26 @@ namespace LogicLayer
                 PrintAccontDetails(account);
                 Console.WriteLine("\nPlease enter in the fields you wish to update (leave blank otherwise):\n");
 
-                // Updating Username
-                string un = getUsername();
-                if (!string.IsNullOrEmpty(un))
+            getUsername:
                 {
-                    account.Username = un;
+                    // Updating Username
+                    string un = getUsername();
+                    if (!string.IsNullOrEmpty(un))
+                    {
+                        account.Username = EncryptionDecryption(un);
+                        if (data.isInFile(account.Username))
+                        {
+                            Console.WriteLine("Username already exists!! Enter again.");
+                            goto getUsername;
+                        }
+                    }
                 }
                 // Updates Pin
                 string pin = getPin();
                 if (!string.IsNullOrEmpty(pin))
                 {
-                    account.Pin = pin;
+                    // doing encryption
+                    account.Pin = EncryptionDecryption(pin);
                 }
                 // Updating the Holder's Name
                 string name = getName();
@@ -294,7 +341,7 @@ namespace LogicLayer
 
             // Has valid or empty value
             string uname = getUsername();
-            customer.Username = uname;
+            customer.Username = EncryptionDecryption(uname);
 
             // Has valid or empty value
             string name = getName();
@@ -390,7 +437,7 @@ namespace LogicLayer
                     foreach (Customer c1 in outList)
                     {
                         Console.WriteLine(Convert.ToString(c1.AccountNo).PadRight(12)
-                            + c1.Username.PadRight(10)
+                            + EncryptionDecryption(c1.Username).PadRight(10)
                             + c1.Name.PadRight(15)
                             + c1.AccountType.PadRight(9)
                             + Convert.ToString(c1.Balance).PadRight(10)
@@ -610,7 +657,7 @@ namespace LogicLayer
                             if (c.Balance >= min && c.Balance <= max)
                             {
                                 Console.WriteLine(Convert.ToString(c.AccountNo).PadRight(12)
-                                    + c.Username.PadRight(10)
+                                    + EncryptionDecryption(c.Username).PadRight(10)
                                     + c.Name.PadRight(15)
                                     + c.AccountType.PadRight(9)
                                     + Convert.ToString(c.Balance).PadRight(10)
@@ -681,7 +728,7 @@ namespace LogicLayer
                             if (d >= d1 && d <= d2)
                             {
                                 Console.WriteLine(Convert.ToString(t.TransactionType).PadRight(18)
-                                    + t.Username.PadRight(10)
+                                    + EncryptionDecryption(t.Username).PadRight(10)
                                     + t.HoldersName.PadRight(15)
                                     + Convert.ToString(t.TransactionAmount).PadRight(10)
                                     + t.Date);

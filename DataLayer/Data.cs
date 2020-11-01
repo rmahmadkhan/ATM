@@ -18,7 +18,7 @@ namespace DataLayer
             {
                 File.AppendAllText("admins.txt", jsonOutput + Environment.NewLine);
             }
-            else if(obj is Customer)
+            else if (obj is Customer)
             {
                 File.AppendAllText("customers.txt", jsonOutput + Environment.NewLine);
             }
@@ -37,13 +37,13 @@ namespace DataLayer
             {
                 File.WriteAllText("admins.txt", jsonOutput + Environment.NewLine);
             }
-            else if(list[0] is Customer)
+            else if (list[0] is Customer)
             {
                 File.WriteAllText("customers.txt", jsonOutput + Environment.NewLine);
             }
 
             // Appends the other objects of list to the file
-            for(int i=1;i<list.Count;i++)
+            for (int i = 1; i < list.Count; i++)
             {
                 AddToFile(list[i]);
             }
@@ -71,9 +71,9 @@ namespace DataLayer
         {
             List<Customer> list = ReadFile<Customer>("customers.txt");
             // Checking and remove the required object from the list
-            foreach(Customer item in list)
+            foreach (Customer item in list)
             {
-                if(item.AccountNo == customer.AccountNo)
+                if (item.AccountNo == customer.AccountNo)
                 {
                     list.Remove(item);
                     break;
@@ -87,9 +87,9 @@ namespace DataLayer
         public void UpdateInFile(Customer customer)
         {
             List<Customer> list = ReadFile<Customer>("customers.txt");
-            for (int i =0; i<list.Count;i++)
+            for (int i = 0; i < list.Count; i++)
             {
-                if(list[i].AccountNo == customer.AccountNo)
+                if (list[i].AccountNo == customer.AccountNo)
                 {
                     list[i] = customer;
                 }
@@ -122,7 +122,7 @@ namespace DataLayer
                 {
                     return 1;
                 }
-                else if(customer.Username == user && customer.Status == "Disabled")
+                else if (customer.Username == user && customer.Status == "Disabled")
                 {
                     return 2;
                 }
@@ -160,13 +160,27 @@ namespace DataLayer
             return false;
         }
 
+        // Checks if an username is in File
+        public bool isInFile(string username)
+        {
+            List<Customer> list = ReadFile<Customer>("customers.txt");
+            foreach (Customer customer in list)
+            {
+                if (customer.Username == username)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // Returns an object if given username
         public Customer GetCustomer(string username)
         {
             List<Customer> list = ReadFile<Customer>("customers.txt");
-            foreach(Customer customer in list)
+            foreach (Customer customer in list)
             {
-                if(customer.Username == username)
+                if (customer.Username == username)
                 {
                     return customer;
                 }
@@ -192,7 +206,7 @@ namespace DataLayer
         public int getLastAccountNumber()
         {
             List<Customer> list = ReadFile<Customer>("customers.txt");
-            if(list.Count > 0)
+            if (list.Count > 0)
             {
                 Customer customer = list[list.Count - 1];
                 return customer.AccountNo;
@@ -203,8 +217,8 @@ namespace DataLayer
         // Deduct amount from balance of an account and update it in file
         public void DeductBalance(Customer c, int amount)
         {
-                    c.Balance -= amount;
-                    UpdateInFile(c);
+            c.Balance -= amount;
+            UpdateInFile(c);
         }
 
         // Add amount to balance of an account and update it in file
@@ -221,9 +235,9 @@ namespace DataLayer
             int totalAmount = 0;
 
             // Checking the transactions and adding the amount
-            foreach(Transaction t in list)
+            foreach (Transaction t in list)
             {
-                if(t.AccountNo == accNo)
+                if (t.AccountNo == accNo)
                 {
                     totalAmount += t.TransactionAmount;
                 }

@@ -15,7 +15,6 @@ namespace ViewLayer
                             "1----Administrator\n" +
                             "2----Customer\n\n" +
                             "Enter 1 or 2:");
-
             try
             {
             getUser:
@@ -40,11 +39,14 @@ namespace ViewLayer
                                     // Reading and storing username
                                     Console.Write("Username: ");
                                     admin.Username = Console.ReadLine();
+                                    //Applying encryption
+                                    admin.Username = logic.EncryptionDecryption(admin.Username);
 
                                     // Reading and storing Pin
                                     Console.Write("5-digit Pin: ");
                                     admin.Pin = Console.ReadLine();
-
+                                    //Applying encryption
+                                    admin.Pin = logic.EncryptionDecryption(admin.Pin);
                                     // Verifying login details                                
                                     if (logic.VerifyLogin(admin))
                                     {
@@ -73,6 +75,8 @@ namespace ViewLayer
                                     // Reading and storing username
                                     Console.Write("Username: ");
                                     customer.Username = Console.ReadLine();
+                                    //Doing encryption
+                                    customer.Username = logic2.EncryptionDecryption(customer.Username);
                                     if (logic2.isValidUsername(customer.Username))
                                     {
                                         if (logic2.isUserActive(customer.Username) == 1)
@@ -83,7 +87,8 @@ namespace ViewLayer
                                                 // Reading and storing Pin
                                                 Console.Write("5-digit Pin: ");
                                                 customer.Pin = Console.ReadLine();
-
+                                                // Do encryption
+                                                customer.Pin = logic2.EncryptionDecryption(customer.Pin);
                                                 // Verifying login details                                
                                                 if (logic2.VerifyLogin(customer))
                                                 {
